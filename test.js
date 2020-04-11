@@ -68,13 +68,13 @@ function addFromCatch(value){
 
 // Gets called every frame.
 // Time elapsed since the last update is passed into the function(milliseconds)
-// function onUpdate({delta}){
-//   var newBalance = userBalance.toString().split(".");
-//   newBalance[0] = newBalance[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-//   newBalance.join('.')
-//   return updateBalance(newBalance)
-// }
-
+function onUpdate({delta}){
+  var newBalance = userBalance.toString().split(".");
+  newBalance[0] = newBalance[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  newBalance.join('.')
+  return updateBalance(newBalance)
+}
+//
 // You have access to a function updateBalance which
 // takes in a string and sets the ui to that value
 
@@ -83,16 +83,86 @@ function addFromCatch(value){
 //==================//
 // 		Part 2	 	//
 //==================//
+function getScore(key, line){
+  // console.log(key, line)
+  var threeRow = { '1' : 5, '2' : 10, '3' : 25};
+  var fourRow = { '1' : 10, '2' : 25, '3' : 50};
+  var fiveRow = { '1' : 20, '2' : 50, '3' : 100};
 
-function processSlots(input){
-	console.log("Output: ", input);
-  var win = [
-    [],
-    [],
-    [],
-    [],
-    [],
-  ]
+
+  var total = 0
+  var count = 0;
+  var shape = ''
+
+
+  for(let i = 0; i < line.length; i++){
+    let ele = line[i].toString();
+
+
+    if(ele === key){
+      count += 1;
+      shape = ele
+
+    }else{
+      break;
+    }
+  }
+
+
+  if(count === 3){
+    total += threeRow[shape]
+  }else if(count === 4){
+    total += fourRow[shape]
+  }else if(count === 5){
+    total += fiveRow[shape]
+  }
+  return total
+
+}
+
+
+function processSlots(arr){
+  var totalScore = 0;
+  //need to filter if there
+  var ptShape = [1,2,3]
+
+  var newArr = arr.join(',').split(',');
+  console.log(newArr)
+  var winningOne = [newArr[0], newArr[6], newArr[12], newArr[8], newArr[4]]
+  let winningOnePoint = getScore(winningOne[0], winningOne)
+      totalScore += winningOnePoint
+      console.log(totalScore);
+  var winningFive = [newArr[10], newArr[6], newArr[2], newArr[8], newArr[14]]
+  let winningFivePoint = getScore(winningFive[0], winningFive)
+      totalScore += winningFivePoint
+
+
+//wining line 2,3,4
+  for(let i = 0; i < arr.length; i++){
+    let line = arr[i];
+    var result = {};
+    for(let j = 0; j < line.length; j++){
+      let ele = line[j];
+
+      if(!result[ele]){
+        result[ele] = 1
+      }else{
+        result[ele] += 1
+      }
+    }
+
+    for(let key in result){
+      var value = result[key];
+
+      if(value >= 3){
+        let point = getScore(key, line);
+        totalScore += point
+      }
+    }
+  }
+
+  console.log('(Output)totalScore', totalScore)
+  return totalScore
 };
 
 // examples input
